@@ -339,12 +339,14 @@
       <i class="fas fa-heart"></i> Add to Wishlist
   </button>
 </form> --}}
- <form id="wishlistForm" method="post" action="{{ route('wishlist.add', ['product' => $product->id]) }}">
-  @csrf
-  <button type="submit" class="btn btn-outline-danger wishlistButton" onclick="">
-    <i class="fas fa-heart"></i> Add to Wishlist
-  </button>
-</form>
+
+    <form id="wishlistForm_{{ $product->id }}" class="wishlistForm" data-product-id="{{ $product->id }}" method="post" action="{{ route('wishlist.add', ['product' => $product->id]) }}">
+        @csrf
+        <button type="submit" onclick="addToWishlist(event, {{ $product->id }})">
+            <i class="fas fa-heart"></i>
+        </button>
+    </form>
+
 
 
 
@@ -359,8 +361,36 @@
 </div>
 
 
+<script>
+function addToWishlist(event, productId) {
+    event.preventDefault(); // Prevents the default form submission
+    
+    let form = document.getElementById(`wishlistForm_${productId}`);
+    let button = form.querySelector('button');
 
+    // Simulating form submission via AJAX
+    fetch(form.action, {
+        method: form.method,
+        body: new FormData(form)
+    })
+    .then(response => {
+        if (response.ok) {
+            button.classList.remove('btn-outline-danger');
+            button.classList.add('btn-danger');
+            button.innerHTML = '<i class="fas fa-heart"></i>';
+            button.setAttribute('disabled', true); // Disable the button after adding to wishlist
+        } else {
+            // Handle any errors or failed submission
+            console.error('Wishlist addition failed.');
+        }
+    })
+    .catch(error => {
+        console.error('Error occurred:', error);
+    });
+}
 
+  
+  </script>
   
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
